@@ -1,0 +1,13 @@
+{
+  "name": "kursath-foundation-root",
+  "version": "1.0.0",
+  "description": "Root of the Kursath Foundation Full-Stack App",
+  "scripts": {
+    "install-all": "npm install && npm install --prefix backend && npm install --prefix frontend",
+    "seed": "node backend/scripts/seed.js",
+    "dev": "concurrently \"npm run server --prefix backend\" \"npm run dev --prefix frontend\""
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

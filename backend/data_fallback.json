@@ -1,0 +1,212 @@
+{
+  "opportunities": [
+    {
+      "_id": "opp_1",
+      "title": "Azim Premji Foundation Scholarship",
+      "provider": "APF",
+      "category": "scholarship",
+      "type": "Private",
+      "deadline": "15 Nov 2025",
+      "amount": "₹30,000/yr",
+      "eligibility": "UG students, merit + need",
+      "description": "Provides financial aid to deserving students pursuing undergraduate courses in India. Focuses on merit-cum-means selection.",
+      "link": "https://azimpremjifoundation.org",
+      "createdAt": "2026-06-05T13:01:24.348Z"
+    },
+    {
+      "_id": "opp_2",
+      "title": "Indian Oil Academic Scholarship",
+      "provider": "IOCL",
+      "category": "scholarship",
+      "type": "Government",
+      "deadline": "20 Dec 2025",
+      "amount": "₹3,000/month",
+      "eligibility": "Class 11 onwards",
+      "description": "Scholarship scheme for class 11th, ITI, Engineering, MBBS, and MBA students.",
+      "link": "https://www.iocl.com",
+      "createdAt": "2026-06-05T13:01:24.348Z"
+    },
+    {
+      "_id": "opp_3",
+      "title": "Post-Matric Scholarship for SC/ST",
+      "provider": "Min. of Social Justice",
+      "category": "scholarship",
+      "type": "Government",
+      "deadline": "30 Nov 2025",
+      "amount": "Tuition + maintenance",
+      "eligibility": "SC/ST, post-Class 10",
+      "description": "Financial assistance for post-matriculation or post-secondary courses to support SC and ST students.",
+      "link": "https://scholarships.gov.in",
+      "createdAt": "2026-06-05T13:01:24.348Z"
+    },
+    {
+      "_id": "opp_4",
+      "title": "PM Vidya Lakshmi Loan Subsidy",
+      "provider": "MoE",
+      "category": "scholarship",
+      "type": "Government",
+      "deadline": "Open",
+      "amount": "Interest subsidy",
+      "eligibility": "Income < ₹4.5L, UG",
+      "description": "Provides interest subsidy on education loans for students from economically weaker sections pursuing higher education.",
+      "link": "https://www.vidyalakshmi.co.in",
+      "createdAt": "2026-06-05T13:01:24.348Z"
+    },
+    {
+      "_id": "opp_5",
+      "title": "National Scholarship Portal (NSP)",
+      "provider": "Govt. of India",
+      "category": "scholarship",
+      "type": "Government",
+      "deadline": "31 Oct 2025",
+      "amount": "₹12,000–₹50,000/yr",
+      "eligibility": "Class 9–PG, family income < ₹2.5L",
+      "description": "A single portal for various government scholarship schemes provided by Central, State, and UT governments.",
+      "link": "https://scholarships.gov.in",
+      "createdAt": "2026-06-05T13:01:24.348Z"
+    },
+    {
+      "_id": "opp_6",
+      "title": "Indira Gandhi Old Age Pension",
+      "provider": "Pension",
+      "category": "scheme",
+      "type": "Pension",
+      "deadline": "Open",
+      "amount": "₹200–₹500/mo",
+      "eligibility": "60+ yrs, BPL",
+      "description": "Financial assistance to senior citizens belonging to households below the poverty line (BPL).",
+      "link": "https://nsap.nic.in",
+      "createdAt": "2026-06-05T13:01:24.348Z"
+    },
+    {
+      "_id": "opp_7",
+      "title": "Widow Pension Scheme",
+      "provider": "Social Protection",
+      "category": "scheme",
+      "type": "Social Protection",
+      "deadline": "Open",
+      "amount": "₹300–₹500/mo",
+      "eligibility": "Widowed, BPL",
+      "description": "Provides pension to widows belonging to BPL households to ensure their livelihood security.",
+      "link": "https://nsap.nic.in",
+      "createdAt": "2026-06-05T13:01:24.348Z"
+    },
+    {
+      "_id": "opp_8",
+      "title": "Disability Pension",
+      "provider": "Social Protection",
+      "category": "scheme",
+      "type": "Social Protection",
+      "deadline": "Open",
+      "amount": "₹300–₹500/mo",
+      "eligibility": "40%+ disability",
+      "description": "Provides financial aid to disabled persons below the poverty line.",
+      "link": "https://nsap.nic.in",
+      "createdAt": "2026-06-05T13:01:24.348Z"
+    },
+    {
+      "_id": "opp_9",
+      "title": "PM YASASVI Scholarship",
+      "provider": "Education",
+      "category": "scheme",
+      "type": "Education",
+      "deadline": "Open",
+      "amount": "₹75,000–₹1.25L",
+      "eligibility": "OBC/EBC/DNT, Class 9–10",
+      "description": "Vibrant India Scholarship Scheme for meritorious OBC, EBC and DNT students studying in classes 9 to 12.",
+      "link": "https://yet.nta.ac.in",
+      "createdAt": "2026-06-05T13:01:24.348Z"
+    },
+    {
+      "_id": "opp_10",
+      "title": "Beti Bachao Beti Padhao",
+      "provider": "Education",
+      "category": "scheme",
+      "type": "Education",
+      "deadline": "Ongoing",
+      "amount": "Multiple benefits",
+      "eligibility": "Girl child",
+      "description": "A central government scheme aimed at generating awareness and improving the efficiency of welfare services intended for girls.",
+      "link": "https://wcd.nic.in",
+      "createdAt": "2026-06-05T13:01:24.348Z"
+    },
+    {
+      "_id": "opp_11",
+      "title": "Ayushman Bharat (PM-JAY)",
+      "provider": "Health",
+      "category": "scheme",
+      "type": "Health",
+      "deadline": "Open",
+      "amount": "₹5L health cover",
+      "eligibility": "SECC families",
+      "description": "National Health Protection Scheme providing health cover up to Rs. 5 lakhs per family per year for secondary and tertiary care hospitalization.",
+      "link": "https://pmjay.gov.in",
+      "createdAt": "2026-06-05T13:01:24.348Z"
+    }
+  ],
+  "volunteers": [
+    {
+      "_id": "vol_1",
+      "name": "Shishupal",
+      "specialty": "Career & schemes",
+      "city": "Delhi",
+      "status": "available",
+      "contact": "shishupal@kursathfoundation.org",
+      "createdAt": "2026-06-05T13:01:24.348Z"
+    },
+    {
+      "_id": "vol_2",
+      "name": "Hemant",
+      "specialty": "Documentation",
+      "city": "Noida",
+      "status": "available",
+      "contact": "hemant@kursathfoundation.org",
+      "createdAt": "2026-06-05T13:01:24.348Z"
+    },
+    {
+      "_id": "vol_3",
+      "name": "Ritesh",
+      "specialty": "Scholarships",
+      "city": "Kolkata",
+      "status": "busy",
+      "contact": "ritesh@kursathfoundation.org",
+      "createdAt": "2026-06-05T13:01:24.348Z"
+    },
+    {
+      "_id": "vol_4",
+      "name": "Deepa",
+      "specialty": "Girls education",
+      "city": "Delhi",
+      "status": "available",
+      "contact": "deepa@kursathfoundation.org",
+      "createdAt": "2026-06-05T13:01:24.348Z"
+    },
+    {
+      "_id": "vol_5",
+      "name": "Ankit Prajapati",
+      "specialty": "Career guidance",
+      "city": "Meerut",
+      "status": "available",
+      "contact": "ankit@kursathfoundation.org",
+      "createdAt": "2026-06-05T13:01:24.348Z"
+    },
+    {
+      "_id": "vol_6",
+      "name": "Vijay Prajapati",
+      "specialty": "Schemes & docs",
+      "city": "Gurgaon",
+      "status": "available",
+      "contact": "vijay@kursathfoundation.org",
+      "createdAt": "2026-06-05T13:01:24.348Z"
+    }
+  ],
+  "messages": [],
+  "users": [
+    {
+      "_id": "user_admin",
+      "username": "admin",
+      "password": "$2a$10$MckuxhR.tsYOqHCbJUzhd.gT13wxExlB4oSOcLmrkwuipaod1wOLm",
+      "createdAt": "2026-06-05T13:01:24.348Z"
+    }
+  ]
+}
