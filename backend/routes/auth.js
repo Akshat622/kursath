@@ -4,8 +4,11 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const { OAuth2Client } = require('google-auth-library');
 const auth = require('../middleware/auth');
 const dataService = require('../config/dataService');
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || '');
 
 // @route   POST /api/auth/login
 // @desc    Authenticate admin & get token
@@ -299,6 +302,100 @@ router.post('/reset-password', async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
+  }
+});
+
+// @route   POST /api/auth/google-login
+// @desc    Authenticate or register user via Google Sign-In
+// @access  Public
+router.post('/google-login', async (req, res) => {
+  const { credential, isMock, mockEmail } = req.body;
+
+  if (!credential && !(isMock && mockEmail)) {
+    return res.status(400).json({ msg: 'Google credential or mock email is required' });
+  }
+
+  let email = null;
+
+  try {
+    // 1. Resolve email from Google token or mock
+    if (isMock && process.env.NODE_ENV !== 'production') {
+      email = mockEmail;
+      console.log(`[Google Auth Mock] Bypassing verification for mock email: ${email}`);
+    } else {
+      const clientId = process.env.GOOGLE_CLIENT_ID;
+      if (!clientId) {
+        return res.status(400).json({ msg: 'Google Client ID is not configured on the backend.' });
+      }
+      
+      const ticket = await client.verifyIdToken({
+        idToken: credential,
+        audience: clientId
+      });
+      const payload = ticket.getPayload();
+      email = payload['email'];
+    }
+
+    if (!email) {
+      return res.status(400).json({ msg: 'Google authentication failed: Email could not be verified.' });
+    }
+
+    email = email.toLowerCase();
+
+    // 2. Check if user exists
+    let user = await dataService.getUser(email);
+
+    if (!user) {
+      console.log(`Google user not found. Registering new standard public user: ${email}`);
+      
+      // Auto-register a new standard public user (not admin/sub-admin)
+      const salt = await bcrypt.genSalt(10);
+      const randomPassword = crypto.randomBytes(16).toString('hex');
+      const hashedPassword = await bcrypt.hash(randomPassword, salt);
+      
+      user = await dataService.createUser({
+        username: email,
+        password: hashedPassword,
+        role: 'user',
+        permissions: {
+          view: false,
+          edit: false,
+          delete: false
+        }
+      });
+    }
+
+    // 3. Sign JWT token
+    const tokenPayload = {
+      user: {
+        id: user._id,
+        username: user.username,
+        role: user.role || 'user',
+        permissions: user.permissions || { view: false, edit: false, delete: false }
+      }
+    };
+
+    jwt.sign(
+      tokenPayload,
+      process.env.JWT_SECRET || 'kursath_jwt_secret_token',
+      { expiresIn: '24h' },
+      (err, token) => {
+        if (err) throw err;
+        res.json({
+          token,
+          user: {
+            id: user._id,
+            username: user.username,
+            role: user.role || 'user',
+            permissions: user.permissions || { view: false, edit: false, delete: false }
+          }
+        });
+      }
+    );
+
+  } catch (err) {
+    console.error('Google Sign-In error:', err.message);
+    res.status(500).send('Google Authentication failed');
   }
 });
 

@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { 
   Plus, Edit2, Trash2, Mail, Users, Award, 
   LogOut, Clock, CheckCircle2, AlertCircle, 
-  Calendar, FileText, Globe, DollarSign, X
+  Calendar, FileText, Globe, X
 } from 'lucide-react';
 
 const isExpired = (deadlineStr) => {
@@ -26,12 +26,14 @@ export default function Admin() {
   const { token, logout, user, hasPermission } = useAuth();
   const navigate = useNavigate();
 
-  // If not logged in, redirect to login page
+  // If not logged in, redirect to login page. If role is 'user', block and redirect to home.
   useEffect(() => {
     if (!token) {
       navigate('/login');
+    } else if (user && user.role === 'user') {
+      navigate('/');
     }
-  }, [token, navigate]);
+  }, [token, user, navigate]);
 
   const [activeTab, setActiveTab] = useState('opportunities');
   const [oppFilter, setOppFilter] = useState('all');

@@ -78,13 +78,20 @@ export default function Navbar() {
             {/* Admin Controls */}
             {user ? (
               <div className="flex items-center gap-2">
-                <Link
-                  to="/admin"
-                  className="flex items-center gap-1.5 px-4 py-2 bg-brand-navy text-white text-sm font-bold rounded-xl hover:bg-brand-dark transition-all shadow-sm"
-                >
-                  <LayoutDashboard className="h-4 w-4" />
-                  <span>{t('nav.signin')}</span>
-                </Link>
+                {(user.role === 'admin' || user.role === 'sub-admin') && (
+                  <Link
+                    to="/admin"
+                    className="flex items-center gap-1.5 px-4 py-2 bg-brand-navy text-white text-sm font-bold rounded-xl hover:bg-brand-dark transition-all shadow-sm"
+                  >
+                    <LayoutDashboard className="h-4 w-4" />
+                    <span>{user.role === 'admin' ? t('nav.admin') : t('nav.subadmin')}</span>
+                  </Link>
+                )}
+                {user.role === 'user' && (
+                  <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-2 rounded-xl" title={user.username}>
+                    {user.username.length > 20 ? user.username.substring(0, 17) + '...' : user.username}
+                  </span>
+                )}
                 <button
                   onClick={logout}
                   className="p-2 border border-rose-200 text-rose-600 rounded-xl hover:bg-rose-50 transition-all cursor-pointer"
@@ -142,14 +149,21 @@ export default function Navbar() {
           <div className="border-t border-slate-100 pt-3 flex flex-col gap-2">
             {user ? (
               <>
-                <Link
-                  to="/admin"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-brand-navy text-white font-bold rounded-xl"
-                >
-                  <LayoutDashboard className="h-4 w-4" />
-                  {t('nav.signin')} {t('nav.dashboard')}
-                </Link>
+                {(user.role === 'admin' || user.role === 'sub-admin') && (
+                  <Link
+                    to="/admin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-2 w-full py-2.5 bg-brand-navy text-white font-bold rounded-xl"
+                  >
+                    <LayoutDashboard className="h-4 w-4" />
+                    {user.role === 'admin' ? t('nav.admin') : t('nav.subadmin')} {t('nav.dashboard')}
+                  </Link>
+                )}
+                {user.role === 'user' && (
+                  <div className="text-center text-xs font-semibold text-slate-500 bg-slate-50 py-2.5 rounded-xl border border-slate-100">
+                    {user.username}
+                  </div>
+                )}
                 <button
                   onClick={() => {
                     logout();

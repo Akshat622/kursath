@@ -19,7 +19,10 @@ const connectDB = async () => {
       return;
     } catch (err) {
       console.error('MongoDB production connection error:', err.message);
-      process.exit(1); // Fail loud in production
+      if (process.env.NODE_ENV === 'production') {
+        process.exit(1); // Fail loud in production
+      }
+      console.log('Local Development: Falling back to local/in-memory database due to connection error...');
     }
   }
   

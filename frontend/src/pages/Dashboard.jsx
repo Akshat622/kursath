@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { 
   Search, Award, BookOpen, Building, Building2, 
   Briefcase, Compass, Users, HandHelping, Mail, 
-  MapPin, Clock, DollarSign, ShieldCheck, FileText,
+  MapPin, Clock, IndianRupee, ShieldCheck, FileText,
   AlertCircle, ChevronRight, X, ArrowUpRight
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
@@ -268,7 +268,7 @@ export default function Dashboard() {
                       )}
                       {opp.amount && (
                         <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
-                          <DollarSign className="h-4.5 w-4.5 text-slate-500 shrink-0" />
+                          <IndianRupee className="h-4.5 w-4.5 text-slate-500 shrink-0" />
                           <span>{t('dash.card.benefit')} <strong className="text-slate-700">{tVal(opp.amount)}</strong></span>
                         </div>
                       )}
@@ -374,7 +374,7 @@ export default function Dashboard() {
                 </div>
                 {selectedOpp.amount && (
                   <div className="flex items-center gap-3.5 text-sm font-semibold text-slate-600">
-                    <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100"><DollarSign className="h-5 w-5 text-brand-navy/70" /></div>
+                    <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100"><IndianRupee className="h-5 w-5 text-brand-navy/70" /></div>
                     <div>
                       <span className="text-slate-500 text-[10px] block uppercase font-bold tracking-wider">{t('drawer.benefit')}</span>
                       <span className="text-slate-800 font-extrabold">{tVal(selectedOpp.amount)}</span>

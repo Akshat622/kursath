@@ -75,6 +75,36 @@ export const AuthProvider = ({ children }) => {
     }
   };
   
+  const loginWithGoogle = async (googleCredential, isMock = false, mockEmail = '') => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`${API_URL}/google-login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ credential: googleCredential, isMock, mockEmail })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem('admin_token', data.token);
+        setToken(data.token);
+        setUser(data.user);
+        return true;
+      } else {
+        setError(data.msg || 'Google login failed');
+        return false;
+      }
+    } catch (err) {
+      console.error('Google login API error:', err);
+      setError('Connection to server failed');
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const hasPermission = (permissionType) => {
     if (!user) return false;
     if (user.role === 'admin') return true;
@@ -82,7 +112,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ token, user, loading, error, login, logout, hasPermission }}>
+    <AuthContext.Provider value={{ token, user, loading, error, login, logout, loginWithGoogle, hasPermission }}>
       {children}
     </AuthContext.Provider>
   );

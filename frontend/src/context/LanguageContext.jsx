@@ -14,6 +14,7 @@ const translations = {
     'nav.signin': 'Sign in',
     'nav.signout': 'Sign out',
     'nav.admin': 'Admin',
+    'nav.subadmin': 'Sub-admin',
     'nav.subtitle': 'Opportunity Dashboard',
     
     // Home Page
@@ -118,6 +119,7 @@ const translations = {
     'nav.signin': 'लॉग इन',
     'nav.signout': 'लॉग आउट',
     'nav.admin': 'एडमिन',
+    'nav.subadmin': 'सब-एडमिन',
     'nav.subtitle': 'अवसर डैशबोर्ड',
     
     // Home Page
