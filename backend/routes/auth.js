@@ -8,7 +8,8 @@ const { OAuth2Client } = require('google-auth-library');
 const auth = require('../middleware/auth');
 const dataService = require('../config/dataService');
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || '');
+const googleClientId = process.env.GOOGLE_CLIENT_ID || process.env.VITE_GOOGLE_CLIENT_ID || '';
+const client = new OAuth2Client(googleClientId);
 
 // @route   POST /api/auth/login
 // @desc    Authenticate admin & get token
@@ -323,7 +324,7 @@ router.post('/google-login', async (req, res) => {
       email = mockEmail;
       console.log(`[Google Auth Mock] Bypassing verification for mock email: ${email}`);
     } else {
-      const clientId = process.env.GOOGLE_CLIENT_ID;
+      const clientId = process.env.GOOGLE_CLIENT_ID || process.env.VITE_GOOGLE_CLIENT_ID;
       if (!clientId) {
         return res.status(400).json({ msg: 'Google Client ID is not configured on the backend.' });
       }
