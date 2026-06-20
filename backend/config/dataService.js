@@ -294,5 +294,6 @@ module.exports = {
   getUsers,
   updateUser,
   deleteUser,
-  getUserByResetToken
+  getUserByResetToken,
+  getFallbackStatus
 };

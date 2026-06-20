@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Admin from './pages/Admin';
+import Profile from './pages/Profile';
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </main>
         <Footer />

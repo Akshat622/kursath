@@ -80,13 +80,30 @@ router.get('/user', auth, async (req, res) => {
     if (!user) {
       return res.status(400).json({ msg: 'User not found' });
     }
+
+    // Populate savedOpportunities
+    let savedOpps = [];
+    if (!dataService.getFallbackStatus() && typeof user.populate === 'function') {
+      await user.populate('savedOpportunities');
+      savedOpps = user.savedOpportunities || [];
+    } else {
+      const opps = await dataService.getOpportunities();
+      const savedIds = user.savedOpportunities || [];
+      savedOpps = opps.filter(o => savedIds.includes(o._id));
+    }
+
     res.json({
       id: user._id,
       username: user.username,
       role: user.role || 'sub-admin',
       permissions: user.permissions || { view: true, edit: false, delete: false },
       firstName: user.firstName || '',
-      lastName: user.lastName || ''
+      lastName: user.lastName || '',
+      phone: user.phone || '',
+      institution: user.institution || '',
+      classOrDegree: user.classOrDegree || '',
+      courseOrMajor: user.courseOrMajor || '',
+      savedOpportunities: savedOpps
     });
   } catch (err) {
     console.error(err.message);
@@ -427,6 +444,110 @@ router.post('/google-login', async (req, res) => {
   } catch (err) {
     console.error('Google Sign-In error:', err.message);
     res.status(500).send('Google Authentication failed');
+  }
+});
+
+// @route   PUT /api/auth/profile
+// @desc    Update user profile data
+// @access  Private
+router.put('/profile', auth, async (req, res) => {
+  const { firstName, lastName, phone, institution, classOrDegree, courseOrMajor } = req.body;
+  
+  try {
+    const user = await dataService.getUser(req.user.username);
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+    
+    const updatedData = {
+      firstName: firstName !== undefined ? firstName : user.firstName,
+      lastName: lastName !== undefined ? lastName : user.lastName,
+      phone: phone !== undefined ? phone : user.phone,
+      institution: institution !== undefined ? institution : user.institution,
+      classOrDegree: classOrDegree !== undefined ? classOrDegree : user.classOrDegree,
+      courseOrMajor: courseOrMajor !== undefined ? courseOrMajor : user.courseOrMajor
+    };
+    
+    const updatedUser = await dataService.updateUser(user._id, updatedData);
+    
+    // Populate saved opportunities
+    let savedOpps = [];
+    if (!dataService.getFallbackStatus() && typeof updatedUser.populate === 'function') {
+      await updatedUser.populate('savedOpportunities');
+      savedOpps = updatedUser.savedOpportunities || [];
+    } else {
+      const opps = await dataService.getOpportunities();
+      const savedIds = updatedUser.savedOpportunities || [];
+      savedOpps = opps.filter(o => savedIds.includes(o._id));
+    }
+    
+    res.json({
+      id: updatedUser._id,
+      username: updatedUser.username,
+      role: updatedUser.role,
+      permissions: updatedUser.permissions,
+      firstName: updatedUser.firstName,
+      lastName: updatedUser.lastName,
+      phone: updatedUser.phone,
+      institution: updatedUser.institution,
+      classOrDegree: updatedUser.classOrDegree,
+      courseOrMajor: updatedUser.courseOrMajor,
+      savedOpportunities: savedOpps
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route   POST /api/auth/save-opportunity/:id
+// @desc    Bookmark/save an opportunity
+// @access  Private
+router.post('/save-opportunity/:id', auth, async (req, res) => {
+  try {
+    const user = await dataService.getUser(req.user.username);
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+    
+    const oppId = req.params.id;
+    let savedList = user.savedOpportunities || [];
+    
+    const savedStrList = savedList.map(id => id.toString());
+    
+    if (!savedStrList.includes(oppId)) {
+      savedList.push(oppId);
+      await dataService.updateUser(user._id, { savedOpportunities: savedList });
+    }
+    
+    res.json({ msg: 'Opportunity saved successfully', savedOpportunities: savedList });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route   DELETE /api/auth/save-opportunity/:id
+// @desc    Unsave/remove a bookmarked opportunity
+// @access  Private
+router.delete('/save-opportunity/:id', auth, async (req, res) => {
+  try {
+    const user = await dataService.getUser(req.user.username);
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+    
+    const oppId = req.params.id;
+    let savedList = user.savedOpportunities || [];
+    
+    savedList = savedList.filter(id => id.toString() !== oppId);
+    
+    await dataService.updateUser(user._id, { savedOpportunities: savedList });
+    
+    res.json({ msg: 'Opportunity removed successfully', savedOpportunities: savedList });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
   }
 });
 

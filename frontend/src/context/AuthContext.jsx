@@ -105,6 +105,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateSavedOpportunities = (newList) => {
+    setUser(prev => prev ? { ...prev, savedOpportunities: newList } : null);
+  };
+
+  const updateUserProfile = (updatedProfile) => {
+    setUser(prev => prev ? { ...prev, ...updatedProfile } : null);
+  };
+
   const hasPermission = (permissionType) => {
     if (!user) return false;
     if (user.role === 'admin') return true;
@@ -112,7 +120,18 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ token, user, loading, error, login, logout, loginWithGoogle, hasPermission }}>
+    <AuthContext.Provider value={{ 
+      token, 
+      user, 
+      loading, 
+      error, 
+      login, 
+      logout, 
+      loginWithGoogle, 
+      hasPermission,
+      updateUserProfile,
+      updateSavedOpportunities
+    }}>
       {children}
     </AuthContext.Provider>
   );
