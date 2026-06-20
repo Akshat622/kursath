@@ -4,6 +4,29 @@ import { GraduationCap, Globe, LogOut, LayoutDashboard, Menu, X } from 'lucide-r
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
+const getInitials = (user) => {
+  if (!user) return '';
+  if (user.firstName || user.lastName) {
+    const f = user.firstName ? user.firstName.charAt(0) : '';
+    const l = user.lastName ? user.lastName.charAt(0) : '';
+    return (f + l).toUpperCase();
+  }
+  const cleanUsername = user.username || '';
+  if (cleanUsername.includes('@')) {
+    const namePart = cleanUsername.split('@')[0];
+    const parts = namePart.split(/[\._-]/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return namePart.substring(0, 2).toUpperCase();
+  }
+  const parts = cleanUsername.split(/[\._-]/);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+  return cleanUsername.substring(0, 2).toUpperCase();
+};
+
 export default function Navbar() {
   const { user, logout } = useAuth();
   const { language, setLanguage, t } = useLanguage();
@@ -88,9 +111,12 @@ export default function Navbar() {
                   </Link>
                 )}
                 {user.role === 'user' && (
-                  <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-2 rounded-xl" title={user.username}>
-                    {user.username.length > 20 ? user.username.substring(0, 17) + '...' : user.username}
-                  </span>
+                  <div 
+                    className="w-9 h-9 rounded-full bg-brand-gold text-brand-dark flex items-center justify-center font-extrabold text-sm shadow-sm border border-brand-gold/30 cursor-pointer"
+                    title={`${user.firstName || ''} ${user.lastName || ''} (${user.username})`}
+                  >
+                    {getInitials(user)}
+                  </div>
                 )}
                 <button
                   onClick={logout}
@@ -160,8 +186,16 @@ export default function Navbar() {
                   </Link>
                 )}
                 {user.role === 'user' && (
-                  <div className="text-center text-xs font-semibold text-slate-500 bg-slate-50 py-2.5 rounded-xl border border-slate-100">
-                    {user.username}
+                  <div className="flex items-center justify-center gap-3 bg-slate-50 py-2 rounded-xl border border-slate-100">
+                    <div className="w-9 h-9 rounded-full bg-brand-gold text-brand-dark flex items-center justify-center font-extrabold text-sm shadow-sm border border-brand-gold/30">
+                      {getInitials(user)}
+                    </div>
+                    <div className="flex flex-col text-left">
+                      <span className="text-xs font-bold text-slate-800">
+                        {user.firstName || user.lastName ? `${user.firstName} ${user.lastName}` : 'User'}
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-semibold">{user.username}</span>
+                    </div>
                   </div>
                 )}
                 <button

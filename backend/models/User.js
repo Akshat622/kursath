@@ -15,6 +15,14 @@ const UserSchema = new mongoose.Schema({
     enum: ['admin', 'sub-admin', 'user'],
     default: 'user'
   },
+  firstName: {
+    type: String,
+    default: ''
+  },
+  lastName: {
+    type: String,
+    default: ''
+  },
   permissions: {
     view: {
       type: Boolean,

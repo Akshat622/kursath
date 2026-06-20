@@ -40,7 +40,9 @@ router.post('/login', async (req, res) => {
         id: user._id,
         username: user.username,
         role: user.role || 'sub-admin',
-        permissions: user.permissions || { view: true, edit: false, delete: false }
+        permissions: user.permissions || { view: true, edit: false, delete: false },
+        firstName: user.firstName || '',
+        lastName: user.lastName || ''
       }
     };
 
@@ -56,7 +58,9 @@ router.post('/login', async (req, res) => {
             id: user._id,
             username: user.username,
             role: user.role || 'sub-admin',
-            permissions: user.permissions || { view: true, edit: false, delete: false }
+            permissions: user.permissions || { view: true, edit: false, delete: false },
+            firstName: user.firstName || '',
+            lastName: user.lastName || ''
           }
         });
       }
@@ -80,7 +84,9 @@ router.get('/user', auth, async (req, res) => {
       id: user._id,
       username: user.username,
       role: user.role || 'sub-admin',
-      permissions: user.permissions || { view: true, edit: false, delete: false }
+      permissions: user.permissions || { view: true, edit: false, delete: false },
+      firstName: user.firstName || '',
+      lastName: user.lastName || ''
     });
   } catch (err) {
     console.error(err.message);
@@ -317,11 +323,22 @@ router.post('/google-login', async (req, res) => {
   }
 
   let email = null;
+  let firstName = '';
+  let lastName = '';
 
   try {
     // 1. Resolve email from Google token or mock
     if (isMock && process.env.NODE_ENV !== 'production') {
       email = mockEmail;
+      const namePart = email.split('@')[0];
+      const parts = namePart.split(/[\._-]/);
+      if (parts.length >= 2) {
+        firstName = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+        lastName = parts[1].charAt(0).toUpperCase() + parts[1].slice(1);
+      } else {
+        firstName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+        lastName = 'User';
+      }
       console.log(`[Google Auth Mock] Bypassing verification for mock email: ${email}`);
     } else {
       const clientId = process.env.GOOGLE_CLIENT_ID || process.env.VITE_GOOGLE_CLIENT_ID;
@@ -335,6 +352,8 @@ router.post('/google-login', async (req, res) => {
       });
       const payload = ticket.getPayload();
       email = payload['email'];
+      firstName = payload['given_name'] || '';
+      lastName = payload['family_name'] || '';
     }
 
     if (!email) {
@@ -358,12 +377,19 @@ router.post('/google-login', async (req, res) => {
         username: email,
         password: hashedPassword,
         role: 'user',
+        firstName,
+        lastName,
         permissions: {
           view: false,
           edit: false,
           delete: false
         }
       });
+    } else if (!user.firstName && !user.lastName && (firstName || lastName)) {
+      // Update existing user with names from Google if missing
+      user.firstName = firstName;
+      user.lastName = lastName;
+      await dataService.updateUser(user._id, { firstName, lastName });
     }
 
     // 3. Sign JWT token
@@ -372,7 +398,9 @@ router.post('/google-login', async (req, res) => {
         id: user._id,
         username: user.username,
         role: user.role || 'user',
-        permissions: user.permissions || { view: false, edit: false, delete: false }
+        permissions: user.permissions || { view: false, edit: false, delete: false },
+        firstName: user.firstName || '',
+        lastName: user.lastName || ''
       }
     };
 
@@ -388,7 +416,9 @@ router.post('/google-login', async (req, res) => {
             id: user._id,
             username: user.username,
             role: user.role || 'user',
-            permissions: user.permissions || { view: false, edit: false, delete: false }
+            permissions: user.permissions || { view: false, edit: false, delete: false },
+            firstName: user.firstName || '',
+            lastName: user.lastName || ''
           }
         });
       }
