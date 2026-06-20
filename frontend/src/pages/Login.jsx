@@ -249,11 +249,9 @@ export default function Login() {
             </div>
 
             {/* Google sign-in */}
-            <div className="space-y-3">
-              {googleClientId && (
-                <div id="google-signin-btn" className="w-full flex justify-center"></div>
-              )}
-              
+            {googleClientId ? (
+              <div id="google-signin-btn" className="w-full flex justify-center my-2"></div>
+            ) : (
               <button
                 type="button"
                 onClick={async () => {
@@ -261,7 +259,7 @@ export default function Login() {
                     isHi 
                       ? 'गूगल के साथ लॉगिन/लिंक करने के लिए ईमेल दर्ज करें (स्थानीय परीक्षण):' 
                       : 'Enter email to link/login with Google (Local Testing Mock):', 
-                    'student@example.com'
+                    'info@kursathfoundation.org'
                   );
                   if (email) {
                     const success = await loginWithGoogle(null, true, email);
@@ -278,9 +276,9 @@ export default function Login() {
                   <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
                   <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                 </svg>
-                <span>{isHi ? 'मॉक गूगल साइन-इन (परीक्षण)' : 'Mock Google Sign-In (Local Testing)'}</span>
+                <span>{t('login.google')}</span>
               </button>
-            </div>
+            )}
 
             <div className="text-center text-xs text-slate-500 font-semibold mt-4">
               {t('login.noaccount')} <span className="text-brand-navy hover:underline cursor-pointer" onClick={() => alert('Default admin setup is configured. Use username: info@kursathfoundation.org, password: kursath@2000')}>{t('login.signup')}</span>
