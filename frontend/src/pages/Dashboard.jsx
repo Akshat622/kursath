@@ -5,9 +5,10 @@ import {
   Search, Award, BookOpen, Building, Building2, 
   Briefcase, Compass, Users, HandHelping, Mail, 
   MapPin, Clock, IndianRupee, ShieldCheck, FileText,
-  AlertCircle, ChevronRight, X, ArrowUpRight
+  AlertCircle, ChevronRight, X, ArrowUpRight, Bookmark
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 
 const isExpired = (deadlineStr) => {
   if (!deadlineStr) return false;
@@ -26,8 +27,32 @@ const isExpired = (deadlineStr) => {
 
 export default function Dashboard() {
   const { t, tVal } = useLanguage();
+  const { user, token, updateSavedOpportunities } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'scholarship';
+
+  const handleToggleSave = async (e, oppId) => {
+    e.stopPropagation();
+    if (!token) return;
+    
+    const isSaved = user?.savedOpportunities?.some(id => (id._id || id) === oppId);
+    
+    try {
+      const response = await fetch(`/api/auth/save-opportunity/${oppId}`, {
+        method: isSaved ? 'DELETE' : 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        updateSavedOpportunities(data.savedOpportunities);
+      }
+    } catch (err) {
+      console.error('Error toggling opportunity save state:', err);
+    }
+  };
   
   const [opportunities, setOpportunities] = useState([]);
   const [volunteers, setVolunteers] = useState([]);
@@ -250,11 +275,22 @@ export default function Dashboard() {
                       <h3 className="text-base sm:text-lg font-bold text-brand-dark line-clamp-2 leading-snug">
                         {tVal(opp.title)}
                       </h3>
-                      {opp.type && (
-                        <span className="text-[9px] font-extrabold uppercase bg-brand-navy/5 text-brand-navy px-2 py-0.5 rounded-md shrink-0">
-                          {t(opp.type)}
-                        </span>
-                      )}
+                      <div className="flex items-center gap-2 shrink-0">
+                        {opp.type && (
+                          <span className="text-[9px] font-extrabold uppercase bg-brand-navy/5 text-brand-navy px-2 py-0.5 rounded-md">
+                            {t(opp.type)}
+                          </span>
+                        )}
+                        {user && user.role === 'user' && (
+                          <button
+                            onClick={(e) => handleToggleSave(e, opp._id)}
+                            className="p-1.5 bg-slate-50 hover:bg-brand-gold/10 rounded-lg border border-slate-100 hover:border-brand-gold/20 transition-all cursor-pointer"
+                            title={user.savedOpportunities?.some(id => (id._id || id) === opp._id) ? "Unsave" : "Save"}
+                          >
+                            <Bookmark className={`h-3.5 w-3.5 ${user.savedOpportunities?.some(id => (id._id || id) === opp._id) ? 'fill-brand-gold text-brand-gold' : 'text-slate-400'}`} />
+                          </button>
+                        )}
+                      </div>
                     </div>
                     <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">
                       {tVal(opp.provider)}

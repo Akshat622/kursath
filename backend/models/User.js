@@ -23,6 +23,26 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  phone: {
+    type: String,
+    default: ''
+  },
+  institution: {
+    type: String,
+    default: ''
+  },
+  classOrDegree: {
+    type: String,
+    default: ''
+  },
+  courseOrMajor: {
+    type: String,
+    default: ''
+  },
+  savedOpportunities: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Opportunity'
+  }],
   permissions: {
     view: {
       type: Boolean,

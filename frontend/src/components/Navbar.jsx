@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { GraduationCap, Globe, LogOut, LayoutDashboard, Menu, X } from 'lucide-react';
+import { GraduationCap, Globe, LogOut, LayoutDashboard, Menu, X, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -32,6 +32,7 @@ export default function Navbar() {
   const { language, setLanguage, t } = useLanguage();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   const isActive = (path) => location.pathname === path;
 
@@ -111,11 +112,45 @@ export default function Navbar() {
                   </Link>
                 )}
                 {user.role === 'user' && (
-                  <div 
-                    className="w-9 h-9 rounded-full bg-brand-gold text-brand-dark flex items-center justify-center font-extrabold text-sm shadow-sm border border-brand-gold/30 cursor-pointer"
-                    title={`${user.firstName || ''} ${user.lastName || ''} (${user.username})`}
-                  >
-                    {getInitials(user)}
+                  <div className="relative">
+                    <button 
+                      onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                      className="w-9 h-9 rounded-full bg-brand-gold text-brand-dark flex items-center justify-center font-extrabold text-sm shadow-sm border border-brand-gold/30 cursor-pointer focus:outline-none hover:scale-105 active:scale-95 transition-transform"
+                      title={`${user.firstName || ''} ${user.lastName || ''} (${user.username})`}
+                    >
+                      {getInitials(user)}
+                    </button>
+                    
+                    {profileDropdownOpen && (
+                      <div className="absolute right-0 mt-2.5 w-48 bg-white border border-slate-100 rounded-2xl shadow-xl py-2 z-50 animate-fadeIn">
+                        <div className="px-4 py-2 border-b border-slate-50 mb-1">
+                          <span className="block text-xs font-bold text-slate-800 truncate">
+                            {user.firstName || user.lastName ? `${user.firstName} ${user.lastName}` : 'Google User'}
+                          </span>
+                          <span className="block text-[10px] text-slate-400 truncate">{user.username}</span>
+                        </div>
+                        
+                        <Link
+                          to="/profile"
+                          onClick={() => setProfileDropdownOpen(false)}
+                          className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-slate-600 hover:text-brand-navy hover:bg-slate-50 transition-colors"
+                        >
+                          <User className="h-4 w-4" />
+                          <span>My Profile</span>
+                        </Link>
+                        
+                        <button
+                          onClick={() => {
+                            setProfileDropdownOpen(false);
+                            logout();
+                          }}
+                          className="flex items-center gap-2 w-full text-left px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50/50 transition-colors cursor-pointer"
+                        >
+                          <LogOut className="h-4 w-4" />
+                          <span>Sign out</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
                 <button
@@ -186,16 +221,27 @@ export default function Navbar() {
                   </Link>
                 )}
                 {user.role === 'user' && (
-                  <div className="flex items-center justify-center gap-3 bg-slate-50 py-2 rounded-xl border border-slate-100">
-                    <div className="w-9 h-9 rounded-full bg-brand-gold text-brand-dark flex items-center justify-center font-extrabold text-sm shadow-sm border border-brand-gold/30">
-                      {getInitials(user)}
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-center gap-3 bg-slate-50 py-2.5 rounded-xl border border-slate-100">
+                      <div className="w-9 h-9 rounded-full bg-brand-gold text-brand-dark flex items-center justify-center font-extrabold text-sm shadow-sm border border-brand-gold/30">
+                        {getInitials(user)}
+                      </div>
+                      <div className="flex flex-col text-left">
+                        <span className="text-xs font-bold text-slate-800">
+                          {user.firstName || user.lastName ? `${user.firstName} ${user.lastName}` : 'User'}
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-semibold">{user.username}</span>
+                      </div>
                     </div>
-                    <div className="flex flex-col text-left">
-                      <span className="text-xs font-bold text-slate-800">
-                        {user.firstName || user.lastName ? `${user.firstName} ${user.lastName}` : 'User'}
-                      </span>
-                      <span className="text-[10px] text-slate-400 font-semibold">{user.username}</span>
-                    </div>
+                    
+                    <Link
+                      to="/profile"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center justify-center gap-2 w-full py-2.5 bg-brand-gold/10 hover:bg-brand-gold/20 text-brand-navy font-bold rounded-xl text-sm transition-colors"
+                    >
+                      <User className="h-4 w-4" />
+                      <span>My Profile</span>
+                    </Link>
                   </div>
                 )}
                 <button
