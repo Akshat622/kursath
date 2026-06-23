@@ -76,6 +76,18 @@ This starts:
 1. **Backend Server**: listening on [http://localhost:5000/](http://localhost:5000/)
 2. **Frontend Development Server (Vite)**: listening on [http://localhost:5173/](http://localhost:5173/)
 
+> [!NOTE]
+> **macOS AirPlay Port Conflict (Port 5000):**
+> On macOS, port `5000` is often pre-bound by the built-in **AirPlay Receiver** service. If you get a port conflict error when starting the backend server on a Mac:
+> 1. Set the port to `5001` in `/backend/.env`:
+>    ```env
+>    PORT=5001
+>    ```
+> 2. Update the frontend proxy target in `/frontend/vite.config.js` to point to port `5001`:
+>    ```javascript
+>    target: 'http://localhost:5001',
+>    ```
+
 ---
 
 ### Step 4: Automatic Database Seeding
