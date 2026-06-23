@@ -5,7 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { 
   User, GraduationCap, Bookmark, Phone, Mail, 
   Building2, BookOpen, Clock, IndianRupee, ShieldCheck, 
-  FileText, X, ArrowUpRight, Save, LayoutDashboard
+  FileText, X, ArrowUpRight, Save, LayoutDashboard, Bell
 } from 'lucide-react';
 
 const isExpired = (deadlineStr) => {
@@ -70,6 +70,15 @@ export default function Profile() {
   const [classOrDegree, setClassOrDegree] = useState('');
   const [courseOrMajor, setCourseOrMajor] = useState('');
 
+  // Notification states
+  const [notifPrefs, setNotifPrefs] = useState({
+    scholarships: true,
+    hostels: true,
+    schemes: true,
+    livelihoods: true,
+    careers: true
+  });
+
   // Sync form states with user data
   useEffect(() => {
     if (user) {
@@ -79,6 +88,15 @@ export default function Profile() {
       setInstitution(user.institution || '');
       setClassOrDegree(user.classOrDegree || '');
       setCourseOrMajor(user.courseOrMajor || '');
+      if (user.notificationPreferences) {
+        setNotifPrefs({
+          scholarships: user.notificationPreferences.scholarships !== undefined ? user.notificationPreferences.scholarships : true,
+          hostels: user.notificationPreferences.hostels !== undefined ? user.notificationPreferences.hostels : true,
+          schemes: user.notificationPreferences.schemes !== undefined ? user.notificationPreferences.schemes : true,
+          livelihoods: user.notificationPreferences.livelihoods !== undefined ? user.notificationPreferences.livelihoods : true,
+          careers: user.notificationPreferences.careers !== undefined ? user.notificationPreferences.careers : true
+        });
+      }
     }
   }, [user]);
 
@@ -117,6 +135,38 @@ export default function Profile() {
     } catch (err) {
       console.error(err);
       setErrorMsg('Failed to connect to the server');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleNotificationSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccessMsg('');
+    setErrorMsg('');
+
+    try {
+      const response = await fetch('/api/auth/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          notificationPreferences: notifPrefs
+        })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        updateUserProfile(data);
+        setSuccessMsg(language === 'en' ? 'Notification preferences updated successfully!' : 'अधिसूचना प्राथमिकताएं सफलतापूर्वक अपडेट की गईं!');
+      } else {
+        setErrorMsg(data.msg || (language === 'en' ? 'Failed to update preferences.' : 'प्राथमिकताएं अपडेट करने में विफल।'));
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMsg(language === 'en' ? 'Connection to server failed.' : 'सर्वर से कनेक्शन विफल रहा।');
     } finally {
       setLoading(false);
     }
@@ -235,6 +285,17 @@ export default function Profile() {
               }`}>
                 {user.savedOpportunities?.length || 0}
               </span>
+            </button>
+            <button
+              onClick={() => { setActiveTab('notifications'); setSuccessMsg(''); setErrorMsg(''); }}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold transition-all text-left cursor-pointer border ${
+                activeTab === 'notifications'
+                  ? 'bg-brand-navy text-white border-brand-navy shadow-md'
+                  : 'bg-white text-slate-600 border-slate-100 hover:bg-slate-50'
+              }`}
+            >
+              <Bell className="h-4 w-4" />
+              <span>{language === 'en' ? 'Email Alerts' : 'ईमेल अलर्ट'}</span>
             </button>
           </div>
 
@@ -466,6 +527,150 @@ export default function Profile() {
                     </div>
                   )}
                 </div>
+              )}
+
+              {/* Tab: Notification Settings Form */}
+              {activeTab === 'notifications' && (
+                <form onSubmit={handleNotificationSubmit} className="space-y-6">
+                  <div>
+                    <h3 className="text-base font-extrabold text-brand-dark mb-1">
+                      {language === 'en' ? 'Email Alerts & Subscriptions' : 'ईमेल अलर्ट और सदस्यता'}
+                    </h3>
+                    <p className="text-slate-400 text-xs font-semibold">
+                      {language === 'en' 
+                        ? 'Select the categories for which you wish to receive real-time email notifications and scholarship alerts.'
+                        : 'उन श्रेणियों का चयन करें जिनके लिए आप वास्तविक समय में ईमेल सूचनाएं और छात्रवृत्ति अलर्ट प्राप्त करना चाहते हैं।'}
+                    </p>
+                  </div>
+
+                  <div className="space-y-4 pt-2">
+                    {/* Scholarship Alerts */}
+                    <div className="flex items-start gap-4 p-4 border border-slate-100 hover:border-slate-200 rounded-2xl transition-all bg-slate-50/20">
+                      <div className="flex items-center h-5">
+                        <input
+                          id="pref-scholarships"
+                          type="checkbox"
+                          checked={notifPrefs.scholarships}
+                          onChange={(e) => setNotifPrefs(prev => ({ ...prev, scholarships: e.target.checked }))}
+                          className="h-4 w-4 text-brand-navy focus:ring-brand-navy border-slate-300 rounded cursor-pointer"
+                        />
+                      </div>
+                      <label htmlFor="pref-scholarships" className="cursor-pointer">
+                        <span className="block text-xs font-bold text-brand-dark">
+                          {language === 'en' ? 'Scholarships & Schemes Alerts' : 'छात्रवृत्ति और योजनाएं अलर्ट'}
+                        </span>
+                        <span className="block text-[11px] text-slate-500 mt-0.5">
+                          {language === 'en' 
+                            ? 'Get instant alerts when new scholarships or educational aids are published.'
+                            : 'नई छात्रवृत्ति या शैक्षणिक सहायता प्रकाशित होने पर तुरंत अलर्ट प्राप्त करें।'}
+                        </span>
+                      </label>
+                    </div>
+
+                    {/* Hostel Alerts */}
+                    <div className="flex items-start gap-4 p-4 border border-slate-100 hover:border-slate-200 rounded-2xl transition-all bg-slate-50/20">
+                      <div className="flex items-center h-5">
+                        <input
+                          id="pref-hostels"
+                          type="checkbox"
+                          checked={notifPrefs.hostels}
+                          onChange={(e) => setNotifPrefs(prev => ({ ...prev, hostels: e.target.checked }))}
+                          className="h-4 w-4 text-brand-navy focus:ring-brand-navy border-slate-300 rounded cursor-pointer"
+                        />
+                      </div>
+                      <label htmlFor="pref-hostels" className="cursor-pointer">
+                        <span className="block text-xs font-bold text-brand-dark">
+                          {language === 'en' ? 'Hostel Accommodations' : 'छात्रावास आवास अलर्ट'}
+                        </span>
+                        <span className="block text-[11px] text-slate-500 mt-0.5">
+                          {language === 'en' 
+                            ? 'Be notified about new hostel admissions, lodging, and student accommodations.'
+                            : 'नए छात्रावास प्रवेश, आवास और छात्र आवास के बारे में अधिसूचित हों।'}
+                        </span>
+                      </label>
+                    </div>
+
+                    {/* Schemes Alerts */}
+                    <div className="flex items-start gap-4 p-4 border border-slate-100 hover:border-slate-200 rounded-2xl transition-all bg-slate-50/20">
+                      <div className="flex items-center h-5">
+                        <input
+                          id="pref-schemes"
+                          type="checkbox"
+                          checked={notifPrefs.schemes}
+                          onChange={(e) => setNotifPrefs(prev => ({ ...prev, schemes: e.target.checked }))}
+                          className="h-4 w-4 text-brand-navy focus:ring-brand-navy border-slate-300 rounded cursor-pointer"
+                        />
+                      </div>
+                      <label htmlFor="pref-schemes" className="cursor-pointer">
+                        <span className="block text-xs font-bold text-brand-dark">
+                          {language === 'en' ? 'Social Welfare & Pension Schemes' : 'समाज कल्याण और पेंशन योजनाएं'}
+                        </span>
+                        <span className="block text-[11px] text-slate-500 mt-0.5">
+                          {language === 'en' 
+                            ? 'Get updates on central/state pensions, disability benefits, and local welfare schemes.'
+                            : 'केंद्रीय/राज्य पेंशन, विकलांगता लाभ और स्थानीय कल्याण योजनाओं पर अपडेट प्राप्त करें।'}
+                        </span>
+                      </label>
+                    </div>
+
+                    {/* Livelihoods Alerts */}
+                    <div className="flex items-start gap-4 p-4 border border-slate-100 hover:border-slate-200 rounded-2xl transition-all bg-slate-50/20">
+                      <div className="flex items-center h-5">
+                        <input
+                          id="pref-livelihoods"
+                          type="checkbox"
+                          checked={notifPrefs.livelihoods}
+                          onChange={(e) => setNotifPrefs(prev => ({ ...prev, livelihoods: e.target.checked }))}
+                          className="h-4 w-4 text-brand-navy focus:ring-brand-navy border-slate-300 rounded cursor-pointer"
+                        />
+                      </div>
+                      <label htmlFor="pref-livelihoods" className="cursor-pointer">
+                        <span className="block text-xs font-bold text-brand-dark">
+                          {language === 'en' ? 'Livelihood & Vocational Training' : 'आजीविका और व्यावसायिक प्रशिक्षण'}
+                        </span>
+                        <span className="block text-[11px] text-slate-500 mt-0.5">
+                          {language === 'en' 
+                            ? 'Stay updated on skill development, self-employment schemes, and training opportunities.'
+                            : 'कौशल विकास, स्व-रोजगार योजनाओं और प्रशिक्षण के अवसरों पर अपडेट रहें।'}
+                        </span>
+                      </label>
+                    </div>
+
+                    {/* Careers Alerts */}
+                    <div className="flex items-start gap-4 p-4 border border-slate-100 hover:border-slate-200 rounded-2xl transition-all bg-slate-50/20">
+                      <div className="flex items-center h-5">
+                        <input
+                          id="pref-careers"
+                          type="checkbox"
+                          checked={notifPrefs.careers}
+                          onChange={(e) => setNotifPrefs(prev => ({ ...prev, careers: e.target.checked }))}
+                          className="h-4 w-4 text-brand-navy focus:ring-brand-navy border-slate-300 rounded cursor-pointer"
+                        />
+                      </div>
+                      <label htmlFor="pref-careers" className="cursor-pointer">
+                        <span className="block text-xs font-bold text-brand-dark">
+                          {language === 'en' ? 'Careers & Internship Updates' : 'करियर और इंटर्नशिप अपडेट'}
+                        </span>
+                        <span className="block text-[11px] text-slate-500 mt-0.5">
+                          {language === 'en' 
+                            ? 'Receive alerts about internships, entry-level job roles, and career counseling.'
+                            : 'इंटर्नशिप, प्रवेश-स्तर की नौकरी की भूमिकाओं और career परामर्श के बारे में अलर्ट प्राप्त करें।'}
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-4 border-t border-slate-50">
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="flex items-center gap-2 px-6 py-3 bg-brand-navy hover:bg-brand-dark text-white text-xs font-extrabold rounded-xl transition-all shadow-sm disabled:opacity-50 cursor-pointer"
+                    >
+                      <Save className="h-4 w-4" />
+                      <span>{loading ? '...' : (language === 'en' ? 'Save Settings' : 'सेटिंग्स सहेजें')}</span>
+                    </button>
+                  </div>
+                </form>
               )}
 
             </div>

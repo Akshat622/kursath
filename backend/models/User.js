@@ -43,6 +43,28 @@ const UserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Opportunity'
   }],
+  notificationPreferences: {
+    scholarships: {
+      type: Boolean,
+      default: true
+    },
+    hostels: {
+      type: Boolean,
+      default: true
+    },
+    schemes: {
+      type: Boolean,
+      default: true
+    },
+    livelihoods: {
+      type: Boolean,
+      default: true
+    },
+    careers: {
+      type: Boolean,
+      default: true
+    }
+  },
   permissions: {
     view: {
       type: Boolean,

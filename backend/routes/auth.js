@@ -103,6 +103,13 @@ router.get('/user', auth, async (req, res) => {
       institution: user.institution || '',
       classOrDegree: user.classOrDegree || '',
       courseOrMajor: user.courseOrMajor || '',
+      notificationPreferences: user.notificationPreferences || {
+        scholarships: true,
+        hostels: true,
+        schemes: true,
+        livelihoods: true,
+        careers: true
+      },
       savedOpportunities: savedOpps
     });
   } catch (err) {
@@ -451,7 +458,7 @@ router.post('/google-login', async (req, res) => {
 // @desc    Update user profile data
 // @access  Private
 router.put('/profile', auth, async (req, res) => {
-  const { firstName, lastName, phone, institution, classOrDegree, courseOrMajor } = req.body;
+  const { firstName, lastName, phone, institution, classOrDegree, courseOrMajor, notificationPreferences } = req.body;
   
   try {
     const user = await dataService.getUser(req.user.username);
@@ -465,7 +472,8 @@ router.put('/profile', auth, async (req, res) => {
       phone: phone !== undefined ? phone : user.phone,
       institution: institution !== undefined ? institution : user.institution,
       classOrDegree: classOrDegree !== undefined ? classOrDegree : user.classOrDegree,
-      courseOrMajor: courseOrMajor !== undefined ? courseOrMajor : user.courseOrMajor
+      courseOrMajor: courseOrMajor !== undefined ? courseOrMajor : user.courseOrMajor,
+      notificationPreferences: notificationPreferences !== undefined ? notificationPreferences : user.notificationPreferences
     };
     
     const updatedUser = await dataService.updateUser(user._id, updatedData);
@@ -492,6 +500,13 @@ router.put('/profile', auth, async (req, res) => {
       institution: updatedUser.institution,
       classOrDegree: updatedUser.classOrDegree,
       courseOrMajor: updatedUser.courseOrMajor,
+      notificationPreferences: updatedUser.notificationPreferences || {
+        scholarships: true,
+        hostels: true,
+        schemes: true,
+        livelihoods: true,
+        careers: true
+      },
       savedOpportunities: savedOpps
     });
   } catch (err) {
