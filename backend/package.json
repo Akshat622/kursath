@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "server": "nodemon server.js"
+    "server": "nodemon server.js",
+    "test": "jest --runInBand --coverage"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -19,6 +20,8 @@
     "nodemailer": "^9.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.0",
+    "supertest": "^6.3.3"
   }
 }

@@ -84,6 +84,13 @@ cd backend
 npm run server
 ```
 
+## Running Backend Tests
+
+```bash
+cd backend
+npm test
+```
+
 ## Running the Frontend Alone
 
 ```bash
