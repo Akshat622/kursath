@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { 
   Plus, Edit2, Trash2, Mail, Users, Award, 
   LogOut, Clock, CheckCircle2, AlertCircle, 
-  Calendar, FileText, Globe, X
+  Calendar, FileText, Globe, X, Paperclip
 } from 'lucide-react';
 
 const isExpired = (deadlineStr) => {
@@ -80,6 +80,10 @@ export default function Admin() {
   const [oppEligibility, setOppEligibility] = useState('');
   const [oppDescription, setOppDescription] = useState('');
   const [oppLink, setOppLink] = useState('');
+  const [oppAttachmentUrl, setOppAttachmentUrl] = useState('');
+  const [oppAttachmentName, setOppAttachmentName] = useState('');
+  const [oppAttachmentUploading, setOppAttachmentUploading] = useState(false);
+  const [oppAttachmentError, setOppAttachmentError] = useState('');
   const [editingOppId, setEditingOppId] = useState(null);
 
   // Vol form inputs
@@ -226,6 +230,40 @@ export default function Admin() {
     setShowUserForm(true);
   };
 
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setOppAttachmentUploading(true);
+    setOppAttachmentError('');
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch('/api/opportunities/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setOppAttachmentUrl(data.url);
+        setOppAttachmentName(data.name);
+      } else {
+        setOppAttachmentError(data.msg || 'Upload failed.');
+      }
+    } catch (err) {
+      console.error(err);
+      setOppAttachmentError('Upload failed due to network error.');
+    } finally {
+      setOppAttachmentUploading(false);
+    }
+  };
+
   const handleOppSubmit = async (e) => {
     e.preventDefault();
     if (!oppTitle || !oppProvider || !oppCategory) {
@@ -242,7 +280,8 @@ export default function Admin() {
       amount: oppCurrency + oppAmountVal,
       eligibility: oppEligibility,
       description: oppDescription,
-      link: oppLink
+      link: oppLink,
+      attachment: oppAttachmentUrl ? { url: oppAttachmentUrl, name: oppAttachmentName } : null
     };
 
     try {
@@ -406,17 +445,10 @@ export default function Admin() {
     setOppEligibility(opp.eligibility || '');
     setOppDescription(opp.description || '');
     setOppLink(opp.link || '');
+    setOppAttachmentUrl(opp.attachment?.url || '');
+    setOppAttachmentName(opp.attachment?.name || '');
+    setOppAttachmentError('');
     setShowOppForm(true);
-  };
-
-  const startEditVol = (vol) => {
-    setEditingVolId(vol._id);
-    setVolName(vol.name);
-    setVolSpecialty(vol.specialty || '');
-    setVolCity(vol.city);
-    setVolStatus(vol.status || 'available');
-    setVolContact(vol.contact || '');
-    setShowVolForm(true);
   };
 
   const resetOppForm = () => {
@@ -431,8 +463,22 @@ export default function Admin() {
     setOppEligibility('');
     setOppDescription('');
     setOppLink('');
+    setOppAttachmentUrl('');
+    setOppAttachmentName('');
+    setOppAttachmentUploading(false);
+    setOppAttachmentError('');
     setShowOppForm(false);
     setActionError('');
+  };
+
+  const startEditVol = (vol) => {
+    setEditingVolId(vol._id);
+    setVolName(vol.name);
+    setVolSpecialty(vol.specialty || '');
+    setVolCity(vol.city);
+    setVolStatus(vol.status || 'available');
+    setVolContact(vol.contact || '');
+    setShowVolForm(true);
   };
 
   const resetVolForm = () => {
@@ -1032,7 +1078,45 @@ export default function Admin() {
                 ></textarea>
               </div>
 
-              <div className="flex gap-3 pt-4 border-t border-slate-100">
+              <div>
+                <label className="block text-slate-500 text-[10px] font-extrabold uppercase tracking-wider mb-2">File Attachment</label>
+                <div className="border border-dashed border-slate-200 rounded-2xl p-4.5 bg-slate-50/20 space-y-2">
+                  <div className="flex items-center gap-3">
+                    <label className="flex items-center gap-2 px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-bold rounded-xl cursor-pointer transition-all">
+                      <Paperclip className="h-4 w-4 text-slate-500" />
+                      <span>{oppAttachmentUploading ? 'Uploading...' : 'Choose File'}</span>
+                      <input
+                        type="file"
+                        onChange={handleFileChange}
+                        disabled={oppAttachmentUploading}
+                        className="hidden"
+                      />
+                    </label>
+                    <span className="text-[11px] text-slate-400">PDF, PNG, JPG or any doc up to 10MB</span>
+                  </div>
+
+                  {oppAttachmentName && (
+                    <div className="flex items-center justify-between p-2 bg-emerald-50/30 border border-emerald-100 rounded-xl text-xs font-bold text-emerald-800 animate-fadeIn">
+                      <span className="truncate max-w-[250px]">{oppAttachmentName}</span>
+                      <button
+                        type="button"
+                        onClick={() => { setOppAttachmentUrl(''); setOppAttachmentName(''); }}
+                        className="text-rose-500 hover:text-rose-700 p-1 hover:bg-rose-50 rounded-lg cursor-pointer"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  )}
+
+                  {oppAttachmentError && (
+                    <div className="text-[11px] font-bold text-rose-500 animate-fadeIn">
+                      {oppAttachmentError}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-slate-100 font-bold">
                 <button
                   type="submit"
                   className="flex-grow py-3.5 bg-brand-navy hover:bg-brand-dark text-white rounded-xl font-bold text-sm shadow-md"

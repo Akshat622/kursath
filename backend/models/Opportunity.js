@@ -38,6 +38,16 @@ const OpportunitySchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  attachment: {
+    url: {
+      type: String,
+      default: ''
+    },
+    name: {
+      type: String,
+      default: ''
+    }
+  },
   createdAt: {
     type: Date,
     default: Date.now
