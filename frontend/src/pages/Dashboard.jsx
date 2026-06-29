@@ -277,7 +277,11 @@ export default function Dashboard() {
                       </h3>
                       <div className="flex items-center gap-2 shrink-0">
                         {opp.type && (
-                          <span className="text-[9px] font-extrabold uppercase bg-brand-navy/5 text-brand-navy px-2 py-0.5 rounded-md">
+                          <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-md ${
+                            opp.type.toLowerCase().trim() === 'pension'
+                              ? 'bg-[#fdf2e9] text-[#0f2942]'
+                              : 'bg-brand-navy/5 text-brand-navy'
+                          }`}>
                             {t(opp.type)}
                           </span>
                         )}

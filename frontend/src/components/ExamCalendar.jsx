@@ -483,21 +483,27 @@ export default function ExamCalendar() {
       else if (cat.includes("Law")) dotColor = "bg-amber-500";
     }
 
+    // Class for the inner circle container
+    let circleClass = "w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full transition-all duration-200";
+    if (isSelected) {
+      if (hasExams) {
+        circleClass += ` ${dotColor} text-white font-extrabold ring-2 ring-brand-gold shadow-md scale-105`;
+      } else {
+        circleClass += " bg-brand-navy text-white font-extrabold ring-2 ring-brand-gold shadow-md scale-105";
+      }
+    } else if (hasExams) {
+      circleClass += ` ${dotColor} text-white font-bold shadow-sm hover:opacity-90`;
+    } else {
+      circleClass += " text-slate-700 font-semibold hover:bg-slate-200/60";
+    }
+
     daysGrid.push(
       <button
         key={`day-${d}`}
         onClick={() => handleDayClick(dateStr)}
-        className={`h-10 sm:h-12 w-full flex flex-col items-center justify-center rounded-xl relative transition-all duration-200 border border-transparent
-          ${isSelected 
-            ? 'bg-brand-navy text-white font-extrabold shadow-md scale-105 border-brand-gold' 
-            : 'hover:bg-slate-100 hover:scale-102 text-slate-700 font-semibold'
-          }
-        `}
+        className="h-10 sm:h-12 w-full flex items-center justify-center relative focus:outline-none"
       >
-        <span className="text-xs sm:text-sm">{d}</span>
-        {hasExams && (
-          <span className={`absolute bottom-1.5 h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-brand-gold' : dotColor} animate-pulse`}></span>
-        )}
+        <span className={circleClass}>{d}</span>
       </button>
     );
   }

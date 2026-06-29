@@ -28,6 +28,16 @@ router.post('/', [auth, checkPermission('edit')], async (req, res) => {
   }
 
   try {
+    // Check if volunteer with same name and city already exists
+    const volunteers = await dataService.getVolunteers();
+    const isDuplicate = volunteers.some(
+      v => v.name.toLowerCase().trim() === name.toLowerCase().trim() && 
+           v.city.toLowerCase().trim() === city.toLowerCase().trim()
+    );
+    if (isDuplicate) {
+      return res.status(400).json({ msg: 'Already exist' });
+    }
+
     const newVolunteer = await dataService.createVolunteer({
       name,
       specialty,

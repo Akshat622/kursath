@@ -484,7 +484,11 @@ export default function Profile() {
                                 {tVal(opp.title)}
                               </h4>
                               {opp.type && (
-                                <span className="text-[8px] font-extrabold uppercase bg-brand-navy/5 text-brand-navy px-1.5 py-0.5 rounded shrink-0">
+                                <span className={`text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded shrink-0 ${
+                                  opp.type.toLowerCase().trim() === 'pension'
+                                    ? 'bg-[#fdf2e9] text-[#0f2942]'
+                                    : 'bg-brand-navy/5 text-brand-navy'
+                                }`}>
                                   {t(opp.type)}
                                 </span>
                               )}

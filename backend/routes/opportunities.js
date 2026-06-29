@@ -66,6 +66,15 @@ router.post('/', [auth, checkPermission('edit')], async (req, res) => {
   }
 
   try {
+    // Check if opportunity with same title already exists
+    const opportunities = await dataService.getOpportunities();
+    const isDuplicate = opportunities.some(
+      opp => opp.title.toLowerCase().trim() === title.toLowerCase().trim()
+    );
+    if (isDuplicate) {
+      return res.status(400).json({ msg: 'Already exist' });
+    }
+
     const newOpportunity = await dataService.createOpportunity({
       title,
       provider,
