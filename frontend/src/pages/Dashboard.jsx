@@ -5,7 +5,7 @@ import {
   Search, Award, BookOpen, Building, Building2, 
   Briefcase, Compass, Users, HandHelping, Mail, 
   MapPin, Clock, IndianRupee, ShieldCheck, FileText,
-  AlertCircle, ChevronRight, X, ArrowUpRight, Bookmark
+  AlertCircle, ChevronRight, X, ArrowUpRight, Bookmark, Paperclip
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
@@ -277,7 +277,11 @@ export default function Dashboard() {
                       </h3>
                       <div className="flex items-center gap-2 shrink-0">
                         {opp.type && (
-                          <span className="text-[9px] font-extrabold uppercase bg-brand-navy/5 text-brand-navy px-2 py-0.5 rounded-md">
+                          <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-md ${
+                            opp.type.toLowerCase().trim() === 'pension'
+                              ? 'bg-[#fdf2e9] text-[#0f2942]'
+                              : 'bg-brand-navy/5 text-brand-navy'
+                          }`}>
                             {t(opp.type)}
                           </span>
                         )}
@@ -435,6 +439,26 @@ export default function Dashboard() {
                   <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-line bg-slate-50/50 p-4 border border-slate-100 rounded-2xl">
                     {tVal(selectedOpp.description)}
                   </p>
+                </div>
+              )}
+
+              {selectedOpp.attachment && selectedOpp.attachment.url && (
+                <div className="space-y-2">
+                  <h4 className="text-xs font-bold uppercase text-slate-500 tracking-wider">Attachment</h4>
+                  <a
+                    href={selectedOpp.attachment.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2.5 p-4 border border-slate-100 hover:border-brand-navy/20 bg-slate-50/20 rounded-2xl transition-all cursor-pointer group"
+                  >
+                    <Paperclip className="h-5 w-5 text-brand-navy group-hover:scale-110 transition-transform" />
+                    <div>
+                      <span className="block text-xs font-bold text-brand-dark group-hover:text-brand-navy transition-colors">
+                        {selectedOpp.attachment.name || 'Download Attachment'}
+                      </span>
+                      <span className="block text-[10px] text-slate-400 mt-0.5">Click to view or download document</span>
+                    </div>
+                  </a>
                 </div>
               )}
             </div>

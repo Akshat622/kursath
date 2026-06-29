@@ -5,7 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { 
   User, GraduationCap, Bookmark, Phone, Mail, 
   Building2, BookOpen, Clock, IndianRupee, ShieldCheck, 
-  FileText, X, ArrowUpRight, Save, LayoutDashboard, Bell
+  FileText, X, ArrowUpRight, Save, LayoutDashboard, Bell, Paperclip
 } from 'lucide-react';
 
 const isExpired = (deadlineStr) => {
@@ -484,7 +484,11 @@ export default function Profile() {
                                 {tVal(opp.title)}
                               </h4>
                               {opp.type && (
-                                <span className="text-[8px] font-extrabold uppercase bg-brand-navy/5 text-brand-navy px-1.5 py-0.5 rounded shrink-0">
+                                <span className={`text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded shrink-0 ${
+                                  opp.type.toLowerCase().trim() === 'pension'
+                                    ? 'bg-[#fdf2e9] text-[#0f2942]'
+                                    : 'bg-brand-navy/5 text-brand-navy'
+                                }`}>
                                   {t(opp.type)}
                                 </span>
                               )}
@@ -747,6 +751,26 @@ export default function Profile() {
                     <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100"><Building2 className="h-5 w-5 text-brand-navy/70" /></div>
                     <span className="text-slate-800 font-bold text-sm">{tVal(selectedOpp.provider)}</span>
                   </div>
+                </div>
+              )}
+
+              {selectedOpp.attachment && selectedOpp.attachment.url && (
+                <div className="space-y-2 pt-4 border-t border-slate-100">
+                  <span className="text-slate-500 text-[10px] block uppercase font-extrabold tracking-wider">Attachment</span>
+                  <a
+                    href={selectedOpp.attachment.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2.5 p-3.5 border border-slate-100 hover:border-brand-navy/20 bg-slate-50/20 rounded-2xl transition-all cursor-pointer group"
+                  >
+                    <Paperclip className="h-4.5 w-4.5 text-brand-navy group-hover:scale-110 transition-transform" />
+                    <div>
+                      <span className="block text-xs font-bold text-brand-dark group-hover:text-brand-navy transition-colors">
+                        {selectedOpp.attachment.name || 'Download Attachment'}
+                      </span>
+                      <span className="block text-[10px] text-slate-400 mt-0.5">Click to view/download file</span>
+                    </div>
+                  </a>
                 </div>
               )}
             </div>
